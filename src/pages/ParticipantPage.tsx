@@ -30,6 +30,10 @@ export default function ParticipantPage() {
   if (error) return <div>Error: {error}</div>;
   if (!participant) return <div>Participant not found</div>;
 
+  function handleDelete() {
+    navigate("/participants");
+  }
+
   return (
     <div>
       <h1>Participant Details</h1>
@@ -37,7 +41,7 @@ export default function ParticipantPage() {
       <div>Club: {participant.club}</div>
       <div>Age: {participant.dateOfBirth ? calculateAge(participant.dateOfBirth) : "Unknown"}</div>
       <div>Disciplines: {participant.disciplines.map((d) => d.name).join(", ")}</div>{" "}
-      <DeleteButton Participant={participant} />
+      <DeleteButton id={participant.id} onSuccess={handleDelete} />{" "}
       <button type="button" onClick={() => navigate(`/participants/${participant.id}/edit`)}>
         Edit
       </button>{" "}

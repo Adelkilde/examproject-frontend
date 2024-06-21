@@ -2,13 +2,12 @@ import { deleteParticipant } from "../service/apiFacade";
 
 const DeleteButton = ({ id, onSuccess }) => {
   const handleDelete = () => {
-    // Confirm before deleting
     const isConfirmed = window.confirm("Are you sure you want to delete this participant?");
     if (isConfirmed) {
       deleteParticipant(id)
         .then(() => {
           console.log("Participant deleted successfully");
-          onSuccess(); // Invoke the onSuccess callback after successful deletion
+          onSuccess();
         })
         .catch((error) => {
           console.error("Failed to delete participant:", error);
