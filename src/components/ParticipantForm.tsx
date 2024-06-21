@@ -5,6 +5,8 @@ export default function ParticipantForm({ handleSave, participant }) {
   const [gender, setGender] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [club, setClub] = useState("");
+  const [disciplines, setDisciplines] = useState([]);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
     if (participant) {
@@ -12,13 +14,15 @@ export default function ParticipantForm({ handleSave, participant }) {
       setGender(participant.gender);
       setDateOfBirth(participant.dateOfBirth);
       setClub(participant.club);
+      setDisciplines(participant.disciplines);
+      setIsUpdate(true);
     }
   }, [participant]);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (!name || !gender || !dateOfBirth || !club) {
+    if (!name || !gender || !dateOfBirth || !club || !disciplines.length) {
       alert("Please fill in all fields");
       return;
     }
@@ -28,14 +32,18 @@ export default function ParticipantForm({ handleSave, participant }) {
       gender,
       dateOfBirth,
       club,
+      disciplines,
     };
 
     handleSave(participantToSave);
 
-    setName("");
-    setGender("");
-    setDateOfBirth("");
-    setClub("");
+    if (!isUpdate) {
+      setName("");
+      setGender("");
+      setDateOfBirth("");
+      setClub("");
+      setDisciplines([]);
+    }
   }
 
   return (
@@ -48,7 +56,7 @@ export default function ParticipantForm({ handleSave, participant }) {
         <br />
         <label>
           Gender:
-          <select name="gender">
+          <select value={gender} onChange={(e) => setGender(e.target.value)}>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
@@ -59,6 +67,20 @@ export default function ParticipantForm({ handleSave, participant }) {
           <input type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
         </label>
         <br />
+        <label>
+          Club:
+          <input type="text" value={club} onChange={(e) => setClub(e.target.value)} />
+        </label>
+        <br />
+        <label>
+          Disciplines:
+          <select value={disciplines} onChange={(e) => setDisciplines(e.target.value)}>
+            <option value="Running">Running</option>
+            <option value="Throwing">Throwing</option>
+            <option value="Decathlon">Decathlon</option>
+          </select>
+        </label>
+        <button type="submit">{isUpdate ? "Save Changes" : "Create"}</button>
       </form>
     </div>
   );

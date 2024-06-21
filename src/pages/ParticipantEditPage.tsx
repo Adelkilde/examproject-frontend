@@ -35,6 +35,7 @@ export default function ParticipantEditPage() {
   return (
     <div>
       <h1>Edit Participant</h1>
+      {participant ? <ParticipantForm participant={participant} handleSave={handleSave} /> : <p>Loading...</p>}
     </div>
   );
 }
