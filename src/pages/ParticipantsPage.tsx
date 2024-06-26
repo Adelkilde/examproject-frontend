@@ -1,54 +1,31 @@
-import { useState, useEffect } from "react";
-import { Participant, getAllParticipants } from "../service/apiFacade";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function ParticipantsPage() {
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [filteredParticipants, setFilteredParticipants] = useState<Participant[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [participants, setParticipants] = useState([]);
+  const navigate = useNavigate();
+
+  const fetchParticipants = async () => {
+    const response = await fetch("http://localhost:8080/participants");
+    const data = await response.json();
+    setParticipants(data);
+  };
 
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        const data = await getAllParticipants();
-        setParticipants(data);
-        setFilteredParticipants(data);
-        setIsLoading(false);
-      } catch (err) {
-        setError("Failed to fetch participants");
-        setIsLoading(false);
-      }
-    };
-
+    console.log("Fetching Participants");
     fetchParticipants();
   }, []);
 
-  useEffect(() => {
-    const filtered = participants.filter((participant) =>
-      participant.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredParticipants(filtered);
-  }, [searchTerm, participants]);
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
   return (
     <div>
-      <h1>Participants</h1>
-      <input
-        type="text"
-        placeholder="Search by name..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <ul className="vertical-list">
-        {filteredParticipants.map((participant) => (
+      <h1>All Participants</h1>
+      <button type="button" onClick={() => navigate(`/participants/new`)}>
+        Create Participant
+      </button>
+      <ul>
+        {participants.map((participant) => (
           <li key={participant.id}>
             <Link to={`/participants/${participant.id}`}>{participant.name}</Link>
-            {` - ${participant.disciplines.map((d) => d.name).join(", ")}`}
           </li>
         ))}
       </ul>

@@ -1,6 +1,10 @@
-export default function calculateAge(dateOfBirth: string): number {
-  const birthDate = new Date(dateOfBirth);
-  const difference = Date.now() - birthDate.getTime();
-  const ageDate = new Date(difference);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+export default function CalculateAge({ dateOfBirth }) {
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const difference = Date.now() - birthDate.getTime();
+    const ageDate = new Date(difference);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
+  return <span>{calculateAge(dateOfBirth)}</span>;
 }

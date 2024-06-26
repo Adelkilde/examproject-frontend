@@ -1,41 +1,52 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getParticipantById, editParticipant, Participant } from "../service/apiFacade";
+import { useNavigate, useParams } from "react-router-dom";
 import ParticipantForm from "../components/ParticipantForm";
 
 export default function ParticipantEditPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
+  const [participant, setParticipant] = useState(null);
   const navigate = useNavigate();
-  const [participant, setParticipant] = useState<Participant | null>(null);
 
   useEffect(() => {
-    const fetchParticipant = async () => {
-      if (id) {
-        try {
-          const fetchedParticipant = await getParticipantById(Number(id));
-          setParticipant(fetchedParticipant);
-        } catch (error) {
-          console.error("Failed to fetch participant:", error);
+    async function fetchParticipant() {
+      try {
+        const response = await fetch(`http://localhost:8080/participants/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const data = await response.json();
+        setParticipant(data);
+      } catch (error) {
+        console.error("Error fetching participant", error);
       }
-    };
+    }
 
     fetchParticipant();
   }, [id]);
 
-  const handleSave = async (editedParticipant: Participant) => {
-    try {
-      await editParticipant(Number(id), editedParticipant);
-      navigate("/participants"); // Adjust the path as necessary
-    } catch (error) {
-      console.error("Failed to edit participant:", error);
+  async function handleEditParticipant(editedParticipant) {
+    const response = await fetch(`http://localhost:8080/participants/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editedParticipant),
+    });
+    if (response.ok) {
+      navigate(`/participants/${id}`);
+    } else {
+      alert("Failed to edit person");
     }
-  };
+  }
+
+  if (!participant) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <h1>Edit Participant</h1>
-      {participant ? <ParticipantForm participant={participant} handleSave={handleSave} /> : <p>Loading...</p>}
+      <h1>Edit participant</h1>
+      <ParticipantForm handleSave={handleEditParticipant} participant={participant} />
     </div>
   );
 }

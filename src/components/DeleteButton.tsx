@@ -1,21 +1,24 @@
-import { deleteParticipant } from "../service/apiFacade";
+import { useNavigate } from "react-router-dom";
 
-const DeleteButton = ({ id, onSuccess }) => {
-  const handleDelete = () => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this participant?");
-    if (isConfirmed) {
-      deleteParticipant(id)
-        .then(() => {
-          console.log("Participant deleted successfully");
-          onSuccess();
-        })
-        .catch((error) => {
-          console.error("Failed to delete participant:", error);
+export default function DeleteButton({ participant }) {
+  const navigate = useNavigate();
+
+  async function handleDelete() {
+    if (window.confirm(`Are you sure you want to delete "${participant.name}"?`)) {
+      try {
+        const response = await fetch(`http://localhost:8080/participants/${participant.id}`, {
+          method: "DELETE",
         });
+        if (response.ok) {
+          navigate("/participants");
+        } else {
+          throw new Error("Failed to delete participant");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
-  };
+  }
 
   return <button onClick={handleDelete}>Delete</button>;
-};
-
-export default DeleteButton;
+}

@@ -1,23 +1,33 @@
 import { useNavigate } from "react-router-dom";
-import { addParticipant } from "../service/apiFacade";
-import ParticipantForm from "../components/ParticipantForm"; // Adjust the import path as necessary
+import ParticipantForm from "../components/ParticipantForm";
 
-export default function CreateParticipantPage() {
+export default function ParticipantCreatePage() {
   const navigate = useNavigate();
 
-  const handleCreateParticipant = async (participant) => {
+  async function handleCreateParticipant(newParticipant) {
     try {
-      const newParticipant = await addParticipant(participant);
-      console.log("Participant created:", newParticipant);
-      navigate("/participants"); // Adjust the path as necessary
+      const response = await fetch(`http://localhost:8080/participants`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newParticipant),
+      });
+      if (response.ok) {
+        navigate(`/participants`);
+      } else {
+        const errorMessage = await response.text();
+        console.error(`Failed to create participant: ${response.status} - ${errorMessage}`);
+        throw new Error(`Failed to create participant: ${response.status} - ${errorMessage}`);
+      }
     } catch (error) {
-      console.error("Failed to create participant:", error);
+      console.error("Error:", error);
     }
-  };
+  }
 
   return (
     <div>
-      <h1>Create Participant</h1>
+      <h1>Create participant</h1>
       <ParticipantForm handleSave={handleCreateParticipant} />
     </div>
   );

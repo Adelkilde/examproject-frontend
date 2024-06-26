@@ -1,50 +1,44 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Participant, getParticipantById } from "../service/apiFacade";
-import calculateAge from "../components/CalculateAge";
 import DeleteButton from "../components/DeleteButton";
+import CalculateAge from "../components/CalculateAge";
 
 export default function ParticipantPage() {
-  const { id } = useParams<{ id: string }>();
-  const [participant, setParticipant] = useState<Participant | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { id } = useParams();
+  const [participant, setParticipant] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchParticipantDetails = async () => {
+    async function fetchParticipant() {
       try {
-        const data = await getParticipantById(Number(id));
+        const response = await fetch(`http://localhost:8080/participants/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         setParticipant(data);
-        setIsLoading(false);
-      } catch (err) {
-        setError("Failed to fetch participant details");
-        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching participant", error);
       }
-    };
+    }
 
-    fetchParticipantDetails();
+    fetchParticipant();
   }, [id]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!participant) return <div>Participant not found</div>;
-
-  function handleDelete() {
-    navigate("/participants");
+  if (!participant) {
+    return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h1>Participant Details</h1>
-      <div>Name: {participant.name}</div>
-      <div>Club: {participant.club}</div>
-      <div>Age: {participant.dateOfBirth ? calculateAge(participant.dateOfBirth) : "Unknown"}</div>
-      <div>Disciplines: {participant.disciplines.map((d) => d.name).join(", ")}</div>{" "}
-      <DeleteButton id={participant.id} onSuccess={handleDelete} />{" "}
+      <h1>{participant.name}</h1>
+      <p>
+        Age: <CalculateAge dateOfBirth={participant.dateOfBirth} />
+      </p>
+      <DeleteButton participant={participant} />
       <button type="button" onClick={() => navigate(`/participants/${participant.id}/edit`)}>
         Edit
-      </button>{" "}
+      </button>
     </div>
   );
 }

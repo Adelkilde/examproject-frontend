@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import ParticipantsPage from "./pages/ParticipantsPage";
 import ParticipantPage from "./pages/ParticipantPage";
 import ParticipantEditPage from "./pages/ParticipantEditPage";
+import ParticipantCreatePage from "./pages/ParticipantCreatePage";
 import DisciplinesPage from "./pages/DisciplinesPage";
 import ResultsPage from "./pages/ResultsPage";
 import "./index.css";
@@ -21,6 +22,7 @@ function App() {
             <Route path="/participants" element={<ParticipantsPage />} />
             <Route path="/participants/:id" element={<ParticipantPage />} />
             <Route path="/participants/:id/edit" element={<ParticipantEditPage />} />
+            <Route path="/participants/new" element={<ParticipantCreatePage />} />
           </Routes>
         </div>
       </main>
