@@ -32,9 +32,11 @@ export default function ParticipantPage() {
   return (
     <div>
       <h1>{participant.name}</h1>
+      <p>Gender: {participant.gender}</p>
       <p>
         Age: <CalculateAge dateOfBirth={participant.dateOfBirth} />
       </p>
+      <p>Club: {participant.club}</p>
       <DeleteButton participant={participant} />
       <button type="button" onClick={() => navigate(`/participants/${participant.id}/edit`)}>
         Edit

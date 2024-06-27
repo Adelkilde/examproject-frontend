@@ -5,6 +5,7 @@ export interface Participant {
   dateOfBirth: Date;
   club: string;
   disciplines: Discipline[];
+  results: Result[];
 }
 
 export interface Discipline {

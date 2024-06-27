@@ -29,6 +29,8 @@ export default function ResultsPage() {
             {result.participant.name} - {result.discipline.name} - {result.resultValue}
             <br />
             Date: {new Date(result.date).toLocaleDateString()}
+            <br />
+            <br />
           </li>
         ))}
       </ul>
